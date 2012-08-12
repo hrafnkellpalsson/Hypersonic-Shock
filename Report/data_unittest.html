@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>data_unittest.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">Test functions in calculators.py module.</span>
+<span class="hl str">&quot;&quot;&quot;</span>
+
+<span class="hl slc"># Python library</span>
+<span class="hl kwa">import</span> unittest
+<span class="hl kwa">import</span> os
+<span class="hl slc"># 3rd party imports</span>
+<span class="hl kwa">import</span> numpy
+
+<span class="hl slc"># The module/functions to test</span>
+<span class="hl kwa">import</span> data
+
+<span class="hl kwa">class</span> <span class="hl kwd">TestCase_calculators</span><span class="hl sym">(</span>unittest<span class="hl sym">.</span>TestCase<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Tests class for functions in data.py</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">no_test_read_engauge_csv</span><span class="hl sym">(</span>self<span class="hl sym">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Test data.read_engauage_csv()</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        engauge_dir <span class="hl sym">=</span> os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">abspath</span><span class="hl sym">(</span>os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">join</span><span class="hl sym">(</span>os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">dirname</span><span class="hl sym">(</span>__file__<span class="hl sym">),</span><span class="hl str">'..'</span><span class="hl sym">,</span><span class="hl str">'engauge_csv'</span><span class="hl sym">))</span>
+        filename <span class="hl sym">=</span> <span class="hl str">'144a_35900.csv'</span>
+        engauge_values_known <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([[</span><span class="hl num">3374.54</span><span class="hl sym">,</span><span class="hl num">812.964</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">4747.6</span><span class="hl sym">,</span><span class="hl num">1339.38</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">5914.66</span><span class="hl sym">,</span><span class="hl num">1885.6</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">6928.66</span><span class="hl sym">,</span><span class="hl num">2413.78</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">7939.92</span><span class="hl sym">,</span><span class="hl num">2988.95</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">8871.57</span><span class="hl sym">,</span><span class="hl num">3484.66</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">9808.3</span><span class="hl sym">,</span><span class="hl num">3942.76</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">11127.1</span><span class="hl sym">,</span><span class="hl num">4603.33</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">12372.6</span><span class="hl sym">,</span><span class="hl num">5306.53</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">13304.2</span><span class="hl sym">,</span><span class="hl num">5893.84</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">14120.1</span><span class="hl sym">,</span><span class="hl num">6430.05</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">14615.1</span><span class="hl sym">,</span><span class="hl num">6730.61</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">15275.5</span><span class="hl sym">,</span><span class="hl num">7093.77</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">15759.7</span><span class="hl sym">,</span><span class="hl num">7326.26</span><span class="hl sym">],</span>
+                                            <span class="hl sym">[</span><span class="hl num">16121.7</span><span class="hl sym">,</span><span class="hl num">7495.94</span><span class="hl sym">]])</span>
+        <span class="hl kwb">file</span> <span class="hl sym">=</span> os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">join</span><span class="hl sym">(</span>engauge_dir<span class="hl sym">,</span> filename<span class="hl sym">)</span>
+        engauge_values_read <span class="hl sym">=</span> data<span class="hl sym">.</span><span class="hl kwd">read_engauge_csv</span><span class="hl sym">(</span><span class="hl kwb">file</span><span class="hl sym">)</span>
+
+        self<span class="hl sym">.</span><span class="hl kwd">assertTrue</span><span class="hl sym">(</span>engauge_values_known<span class="hl sym">.</span>shape <span class="hl sym">==</span> engauge_values_read<span class="hl sym">.</span>shape<span class="hl sym">)</span>
+
+        dimensions <span class="hl sym">=</span> engauge_values_read<span class="hl sym">.</span>shape
+        <span class="hl kwa">for</span> i<span class="hl sym">,</span>j <span class="hl kwa">in</span> <span class="hl kwb">zip</span><span class="hl sym">(</span><span class="hl kwb">range</span><span class="hl sym">(</span>dimensions<span class="hl sym">[</span><span class="hl num">0</span><span class="hl sym">]),</span> <span class="hl kwb">range</span><span class="hl sym">(</span>dimensions<span class="hl sym">[</span><span class="hl num">1</span><span class="hl sym">])):</span>
+            self<span class="hl sym">.</span><span class="hl kwd">assertTrue</span><span class="hl sym">(</span>engauge_values_known<span class="hl sym">[</span>i<span class="hl sym">,</span>j<span class="hl sym">] ==</span> engauge_values_read<span class="hl sym">[</span>i<span class="hl sym">,</span>j<span class="hl sym">])</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">no_test_read_multiple_engauge_csv</span><span class="hl sym">(</span>self<span class="hl sym">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Test data.read_multiple_engauge_csv()</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        engauge_dir <span class="hl sym">=</span> os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">abspath</span><span class="hl sym">(</span>os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">join</span><span class="hl sym">(</span>os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">dirname</span><span class="hl sym">(</span>__file__<span class="hl sym">),</span><span class="hl str">'..'</span><span class="hl sym">,</span><span class="hl str">'engauge_csv'</span><span class="hl sym">))</span>
+        filenames <span class="hl sym">= [</span><span class="hl str">'144a_35900.csv'</span><span class="hl sym">,</span> <span class="hl str">'144a_59800.csv'</span><span class="hl sym">]</span>
+        engauge_list <span class="hl sym">=</span> data<span class="hl sym">.</span><span class="hl kwd">read_multiple_engauge_csv</span><span class="hl sym">(</span>engauge_dir<span class="hl sym">,</span> filenames<span class="hl sym">)</span>
+        <span class="hl kwa">print</span> <span class="hl str">'Ouptut from test_read_multiple_engauge_csv() in data_unittest.py:'</span>
+        <span class="hl kwa">print</span> engauge_list
+
+    <span class="hl kwa">def</span> <span class="hl kwd">test_read_single_engauge_csv</span><span class="hl sym">(</span>self<span class="hl sym">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Test data.read_single_engauge_csv()</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        engauge_dir <span class="hl sym">=</span> os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">abspath</span><span class="hl sym">(</span>os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">join</span><span class="hl sym">(</span>os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">dirname</span><span class="hl sym">(</span>__file__<span class="hl sym">),</span><span class="hl str">'..'</span><span class="hl sym">,</span><span class="hl str">'engauge_csv'</span><span class="hl sym">))</span>
+        filename <span class="hl sym">=</span> <span class="hl str">'144b_200100_to_294800.csv'</span>
+        <span class="hl kwb">file</span> <span class="hl sym">=</span> os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">join</span><span class="hl sym">(</span>engauge_dir<span class="hl sym">,</span> filename<span class="hl sym">)</span>
+        engauge_array_144b <span class="hl sym">=</span> data<span class="hl sym">.</span><span class="hl kwd">read_single_engauge_csv</span><span class="hl sym">(</span><span class="hl kwb">file</span><span class="hl sym">)</span>
+        <span class="hl kwa">print</span>  <span class="hl str">'shape:'</span><span class="hl sym">,</span> engauge_array_144b<span class="hl sym">.</span>shape
+        <span class="hl slc"># print engauge_array</span>
+
+
+
+
+
+
+<span class="hl kwa">if</span> __name__ <span class="hl sym">==</span> <span class="hl str">'__main__'</span><span class="hl sym">:</span>
+    unittest<span class="hl sym">.</span><span class="hl kwd">main</span><span class="hl sym">()</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 2.10, http://www.andre-simon.de/-->

@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>calculators.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">Functions to calculate thermodynamics properties of real gas across a normal shock wave.</span>
+<span class="hl str">Inviscied, equilibrium flow is assumed.</span>
+<span class="hl str">Also functions to calculate equillibrium thermodynamic properties of air when considered</span>
+<span class="hl str">a real gas mixture.</span>
+<span class="hl str">&quot;&quot;&quot;</span>
+
+<span class="hl slc"># Library imports</span>
+<span class="hl kwa">import</span> sys
+<span class="hl slc"># 3rd party imports</span>
+<span class="hl kwa">import</span> numpy
+<span class="hl kwa">import</span> scipy
+<span class="hl kwa">from</span> scipy <span class="hl kwa">import</span> optimize
+<span class="hl slc"># Local imports</span>
+<span class="hl kwa">import</span> correlation_coefficients
+<span class="hl kwa">import</span> constants
+
+<span class="hl kwa">def</span> <span class="hl kwd">p2_shock_wave</span><span class="hl sym">(</span>p1<span class="hl sym">,</span> rho1<span class="hl sym">,</span> u1<span class="hl sym">,</span> rho1_to_rho2<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Calculate the pressure of a real gas mixture behind a normal shock wave in inviscid equilibrium flow.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param p1: The pressure of the gas before the shock.</span>
+<span class="hl str">    :param rho1: The density of the gas before the shock.</span>
+<span class="hl str">    :param u1: The velocity of the gas before the shock.</span>
+<span class="hl str">    :param rho1_to_rho2: The ratio of gas density across the shock, more specifically rho1/rho2.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return p2: The pressure behind the shock.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    p2 <span class="hl sym">=</span> p1 <span class="hl sym">+</span> rho1 <span class="hl sym">*</span> numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>u1<span class="hl sym">,</span> <span class="hl num">2</span><span class="hl sym">.) * (</span><span class="hl num">1</span> <span class="hl sym">-</span> rho1_to_rho2<span class="hl sym">)</span>
+    <span class="hl kwa">return</span> p2
+
+<span class="hl kwa">def</span> <span class="hl kwd">h2_shock_wave</span><span class="hl sym">(</span>h1<span class="hl sym">,</span> u1<span class="hl sym">,</span> rho1_to_rho2<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Calculate the static enthalpy of a real gas mixture behind a normal shock wave in inviscid equilibrium flow.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param h1: The static enthalpy of the gas before the shock.</span>
+<span class="hl str">    :param u1: The velocity of the gas before the shock.</span>
+<span class="hl str">    :param rho1_to_rho2: The ratio of gas density across the shock, more specifically rho1/rho2.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return h2: The static enthalpy behind the shock.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    h2 <span class="hl sym">=</span> h1 <span class="hl sym">+ (</span>numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>u1<span class="hl sym">,</span> <span class="hl num">2</span><span class="hl sym">.) /</span> <span class="hl num">2</span><span class="hl sym">) * (</span><span class="hl num">1</span> <span class="hl sym">-</span> numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>rho1_to_rho2<span class="hl sym">,</span> <span class="hl num">2</span><span class="hl sym">.))</span>
+    <span class="hl kwa">return</span> h2
+
+<span class="hl kwa">def</span> <span class="hl kwd">get_gamma_helper</span><span class="hl sym">(</span>coefficients10<span class="hl sym">,</span> Y<span class="hl sym">,</span> Z<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Helper function for get_gamma()</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    c1 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">0</span><span class="hl sym">]</span>
+    c2 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">1</span><span class="hl sym">]</span>
+    c3 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">2</span><span class="hl sym">]</span>
+    c4 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">3</span><span class="hl sym">]</span>
+    c5 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">4</span><span class="hl sym">]</span>
+    c6 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">5</span><span class="hl sym">]</span>
+    c7 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">6</span><span class="hl sym">]</span>
+    c8 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">7</span><span class="hl sym">]</span>
+    c9 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">8</span><span class="hl sym">]</span>
+    c10 <span class="hl sym">=</span> coefficients10<span class="hl sym">[</span><span class="hl num">9</span><span class="hl sym">]</span>
+
+    terms1to5 <span class="hl sym">=</span> c1 <span class="hl sym">+</span> c2<span class="hl sym">*</span>Y <span class="hl sym">+</span> c3<span class="hl sym">*</span>Z <span class="hl sym">+</span> c4<span class="hl sym">*</span>Y<span class="hl sym">*</span>Z <span class="hl sym">+</span> c5<span class="hl sym">*</span>numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>Y<span class="hl sym">,</span><span class="hl num">2</span><span class="hl sym">.)</span>
+    terms6to8 <span class="hl sym">=</span> c6<span class="hl sym">*</span>numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>Z<span class="hl sym">,</span><span class="hl num">2</span><span class="hl sym">.) +</span> c7<span class="hl sym">*</span>numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>Y<span class="hl sym">,</span><span class="hl num">2</span><span class="hl sym">.)*</span>Z <span class="hl sym">+</span> c8<span class="hl sym">*</span>Y<span class="hl sym">*</span>numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>Z<span class="hl sym">,</span><span class="hl num">2</span><span class="hl sym">.)</span>
+    terms9to10 <span class="hl sym">=</span> c9<span class="hl sym">*</span>numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>Y<span class="hl sym">,</span><span class="hl num">3</span><span class="hl sym">.) +</span> c10<span class="hl sym">*</span>numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>Z<span class="hl sym">,</span><span class="hl num">3</span><span class="hl sym">.)</span>
+    terms1to10 <span class="hl sym">=</span> terms1to5 <span class="hl sym">+</span> terms6to8 <span class="hl sym">+</span> terms9to10
+
+    <span class="hl kwa">return</span> terms1to10
+
+<span class="hl kwa">def</span> <span class="hl kwd">get_gamma</span><span class="hl sym">(</span>coefficients<span class="hl sym">,</span> Y<span class="hl sym">,</span> Z<span class="hl sym">,</span> sign<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    The Srinivasan-Tannehill-Weilmuenster correlations for p(e, rho) and T(p, rho) have a</span>
+<span class="hl str">    certain structure. Note that the sum of the &quot;coefficient terms&quot; (called gamma in the</span>
+<span class="hl str">    p(e, rho) correlation) are almost identical, differing at most by one sign in the</span>
+<span class="hl str">    denominator.</span>
+<span class="hl str">    Take advantage of that structure to write only a single function involving the sum</span>
+<span class="hl str">    of the coefficient terms.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param coefficients: A 1D array of the 24 coefficients in numerically ascending order.</span>
+<span class="hl str">        I.e. numpy.array([c1, c2, ..., c24])</span>
+<span class="hl str">    :param Y: The Y parameter for the given correlation.</span>
+<span class="hl str">    :param Z: The Z paramter for the given correlation</span>
+<span class="hl str">    :param sign: The sign of the exponential term in the correlation.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return gamma: The sum of the coefficient terms.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    coefficients1to10 <span class="hl sym">=</span> coefficients<span class="hl sym">[</span><span class="hl num">0</span><span class="hl sym">:</span><span class="hl num">10</span><span class="hl sym">]</span>
+    terms1to10 <span class="hl sym">=</span> <span class="hl kwd">get_gamma_helper</span><span class="hl sym">(</span>coefficients1to10<span class="hl sym">,</span> Y<span class="hl sym">,</span> Z<span class="hl sym">)</span>
+
+    coefficients11to20 <span class="hl sym">=</span> coefficients<span class="hl sym">[</span><span class="hl num">10</span><span class="hl sym">:</span><span class="hl num">20</span><span class="hl sym">]</span>
+    terms11to20 <span class="hl sym">=</span> <span class="hl kwd">get_gamma_helper</span><span class="hl sym">(</span>coefficients11to20<span class="hl sym">,</span> Y<span class="hl sym">,</span> Z<span class="hl sym">)</span>
+
+    c21 <span class="hl sym">=</span> coefficients<span class="hl sym">[</span><span class="hl num">20</span><span class="hl sym">]</span>
+    c22 <span class="hl sym">=</span> coefficients<span class="hl sym">[</span><span class="hl num">21</span><span class="hl sym">]</span>
+    c23 <span class="hl sym">=</span> coefficients<span class="hl sym">[</span><span class="hl num">22</span><span class="hl sym">]</span>
+    c24 <span class="hl sym">=</span> coefficients<span class="hl sym">[</span><span class="hl num">23</span><span class="hl sym">]</span>
+    terms21to24 <span class="hl sym">=</span> c21 <span class="hl sym">+</span> c22<span class="hl sym">*</span>Y <span class="hl sym">+</span> c23<span class="hl sym">*</span>Z <span class="hl sym">+</span> c24<span class="hl sym">*</span>Y<span class="hl sym">*</span>Z
+
+    gamma <span class="hl sym">=</span> terms1to10 <span class="hl sym">+</span> terms11to20 <span class="hl sym">/ (</span><span class="hl num">1</span> <span class="hl sym">+</span> sign <span class="hl sym">*</span> numpy<span class="hl sym">.</span><span class="hl kwd">exp</span><span class="hl sym">(</span>terms21to24<span class="hl sym">))</span>
+    <span class="hl kwa">return</span> gamma
+
+<span class="hl kwa">def</span> <span class="hl kwd">srinivasan_p</span><span class="hl sym">(</span>e<span class="hl sym">,</span> rho<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Calculate the pressure of air, when considered a real gas mixture, given the internal energy and density.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param e: The internal energy of the air.</span>
+<span class="hl str">    :param rho: The density of the air.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return p: The pressure of the air.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    rho0 <span class="hl sym">=</span> constants<span class="hl sym">.</span>rho0
+    T0 <span class="hl sym">=</span> constants<span class="hl sym">.</span>T0
+    R <span class="hl sym">=</span> constants<span class="hl sym">.</span>R
+
+    Y <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">log10</span><span class="hl sym">(</span>rho <span class="hl sym">/</span> rho0<span class="hl sym">)</span>
+    Z <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">log10</span><span class="hl sym">(</span>e <span class="hl sym">/ (</span>R <span class="hl sym">*</span> T0<span class="hl sym">))</span>
+    <span class="hl slc"># print 'Y, Z = ', Y, Z</span>
+
+    out_dict <span class="hl sym">=</span> correlation_coefficients<span class="hl sym">.</span><span class="hl kwd">load_pressure_coefficients</span><span class="hl sym">(</span>Y<span class="hl sym">,</span> Z<span class="hl sym">)</span>
+    coefficients <span class="hl sym">=</span> out_dict<span class="hl sym">[</span><span class="hl str">'coefficients'</span><span class="hl sym">]</span>
+    sign <span class="hl sym">=</span> out_dict<span class="hl sym">[</span><span class="hl str">'sign'</span><span class="hl sym">]</span>
+
+    gamma <span class="hl sym">=</span> <span class="hl kwd">get_gamma</span><span class="hl sym">(</span>coefficients<span class="hl sym">,</span> Y<span class="hl sym">,</span> Z<span class="hl sym">,</span> sign<span class="hl sym">)</span>
+    p <span class="hl sym">=</span> rho <span class="hl sym">*</span> e <span class="hl sym">* (</span>gamma <span class="hl sym">-</span> <span class="hl num">1</span><span class="hl sym">)</span>
+    <span class="hl kwa">return</span> p
+
+<span class="hl kwa">def</span> <span class="hl kwd">srinivasan_p_zero</span><span class="hl sym">(</span>rho_guess<span class="hl sym">,</span> h<span class="hl sym">,</span> p<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    A wrapper around the srinivasan_p() function suitable for input into optimize.fsolve()</span>
+<span class="hl str">    to solve for the density.</span>
+<span class="hl str">    Used in calculate_p_rho_h().</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    e <span class="hl sym">=</span> h <span class="hl sym">-</span> p <span class="hl sym">/</span> rho_guess
+    p_correlation <span class="hl sym">=</span> <span class="hl kwd">srinivasan_p</span><span class="hl sym">(</span>e<span class="hl sym">,</span> rho_guess<span class="hl sym">)</span>
+    zero <span class="hl sym">=</span> p <span class="hl sym">-</span> p_correlation
+    <span class="hl kwa">return</span> zero
+
+<span class="hl kwa">def</span> <span class="hl kwd">calculate_p_rho_h</span><span class="hl sym">(</span>u1<span class="hl sym">,</span> p1<span class="hl sym">,</span> rho1<span class="hl sym">,</span> h1<span class="hl sym">,</span> rho2_guess<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Calculate the pressure, density and enthalpy behind a normal shock wave in inviscid equilibrium flow</span>
+<span class="hl str">    given the upstream pressure, density and temperature and an educated guess for downstream density.</span>
+<span class="hl str">    Only applicable to air, and only when it is considered a real gas mixture.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param u2: Upstream velocity.</span>
+<span class="hl str">    :param p1: Upstream pressure.</span>
+<span class="hl str">    :param rho1: Upstream density.</span>
+<span class="hl str">    :param rho2_guess: Guess for downstream density.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return return_dict: A dictionary for the downstream values of pressure, density and enthalpy.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    rho2_guess_original <span class="hl sym">=</span> rho2_guess
+    tolerance <span class="hl sym">=</span> <span class="hl num">1E-6</span>
+    <span class="hl slc"># Need to supply an initial value, just ensure that it's larger than tolerance.</span>
+    density_ratio_difference <span class="hl sym">=</span> <span class="hl num">2</span> <span class="hl sym">*</span> tolerance
+
+    <span class="hl slc"># Added for refined guessing</span>
+    divergence <span class="hl sym">=</span> <span class="hl kwa">False</span>
+    divide_counter <span class="hl sym">=</span> <span class="hl num">0</span>
+    multiply_counter <span class="hl sym">=</span> <span class="hl num">0</span>
+    persistance <span class="hl sym">=</span> <span class="hl num">10</span><span class="hl sym">.</span>
+    <span class="hl slc"># Choose a value of guess_change larger than 1.0</span>
+    guess_change <span class="hl sym">=</span> <span class="hl num">1.05</span>
+    guess_range <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">power</span><span class="hl sym">(</span>guess_change<span class="hl sym">,</span> <span class="hl kwb">float</span><span class="hl sym">(</span>persistance<span class="hl sym">))</span>
+
+    <span class="hl kwa">while</span> density_ratio_difference <span class="hl sym">&gt;</span> tolerance<span class="hl sym">:</span>
+
+        rho1_to_rho2 <span class="hl sym">=</span> rho1 <span class="hl sym">/</span> rho2_guess
+        <span class="hl slc"># print 'rho1_to_rho2: ', rho1_to_rho2</span>
+        p2 <span class="hl sym">=</span> <span class="hl kwd">p2_shock_wave</span><span class="hl sym">(</span>p1<span class="hl sym">,</span> rho1<span class="hl sym">,</span> u1<span class="hl sym">,</span> rho1_to_rho2<span class="hl sym">)</span>
+        h2 <span class="hl sym">=</span> <span class="hl kwd">h2_shock_wave</span><span class="hl sym">(</span>h1<span class="hl sym">,</span> u1<span class="hl sym">,</span> rho1_to_rho2<span class="hl sym">)</span>
+
+        full_out <span class="hl sym">=</span> optimize<span class="hl sym">.</span><span class="hl kwd">fsolve</span><span class="hl sym">(</span>srinivasan_p_zero<span class="hl sym">,</span> rho2_guess<span class="hl sym">,</span> args<span class="hl sym">=(</span>h2<span class="hl sym">,</span> p2<span class="hl sym">),</span> full_output<span class="hl sym">=</span><span class="hl kwa">True</span><span class="hl sym">)</span>
+
+        <span class="hl slc"># We only want to use the value fsolve() spits out if the equations converged.</span>
+        <span class="hl kwa">if</span> full_out<span class="hl sym">[-</span><span class="hl num">1</span><span class="hl sym">].</span><span class="hl kwd">startswith</span><span class="hl sym">(</span><span class="hl str">'The solution converged'</span><span class="hl sym">):</span>
+            divergence <span class="hl sym">=</span> <span class="hl kwa">False</span>
+            rho2_guess <span class="hl sym">=</span> full_out<span class="hl sym">[</span><span class="hl num">0</span><span class="hl sym">]</span>
+
+        <span class="hl kwa">if</span> full_out<span class="hl sym">[-</span><span class="hl num">1</span><span class="hl sym">].</span><span class="hl kwd">startswith</span><span class="hl sym">(</span><span class="hl str">'The iteration is not making good progress'</span><span class="hl sym">):</span>
+            <span class="hl slc"># print &quot;We're diverging.&quot;</span>
+            divergence <span class="hl sym">=</span> <span class="hl kwa">True</span>
+
+        <span class="hl kwa">if</span> divergence <span class="hl kwa">and</span> divide_counter <span class="hl sym">&lt;</span> persistance<span class="hl sym">:</span>
+            rho2_guess <span class="hl sym">=</span> rho2_guess <span class="hl sym">/</span> guess_change
+            divide_counter <span class="hl sym">+=</span> <span class="hl num">1</span>
+            <span class="hl slc"># Reset rho2_guess to it's original value if division of rho2_guess only results in divergence.</span>
+            <span class="hl kwa">if</span> divide_counter <span class="hl sym">==</span> persistance<span class="hl sym">:</span>
+                rho2_guess <span class="hl sym">=</span> rho2_guess_original
+
+        <span class="hl kwa">if</span> divergence <span class="hl kwa">and</span> divide_counter <span class="hl sym">==</span> persistance <span class="hl kwa">and</span> multiply_counter <span class="hl sym">&lt;</span> persistance<span class="hl sym">:</span>
+            rho2_guess <span class="hl sym">=</span> rho2_guess <span class="hl sym">*</span> guess_change
+            multiply_counter <span class="hl sym">+=</span> <span class="hl num">1</span>
+            <span class="hl kwa">if</span> multiply_counter <span class="hl sym">==</span> persistance<span class="hl sym">:</span>
+                error_message <span class="hl sym">=</span> <span class="hl str">'We have tried modifying the rho2 guess but still the numerical solution of '</span> \
+                    <span class="hl str">'the coupled equations for p, rho and h diverges.'</span>
+                <span class="hl kwa">print</span> error_message
+
+        rho1_to_rho2_new <span class="hl sym">=</span> rho1 <span class="hl sym">/</span> rho2_guess
+        density_ratio_difference <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwb">abs</span><span class="hl sym">(</span>rho1_to_rho2_new <span class="hl sym">-</span> rho1_to_rho2<span class="hl sym">)</span>
+
+    rho2 <span class="hl sym">=</span> rho2_guess
+    return_dict <span class="hl sym">= {</span><span class="hl str">'pressure'</span><span class="hl sym">:</span> p2<span class="hl sym">,</span>
+                   <span class="hl str">'density'</span><span class="hl sym">:</span> rho2<span class="hl sym">,</span>
+                   <span class="hl str">'enthalpy'</span><span class="hl sym">:</span> h2<span class="hl sym">}</span>
+    <span class="hl kwa">return</span> return_dict
+
+<span class="hl kwa">def</span> <span class="hl kwd">srinivasan_T</span><span class="hl sym">(</span>p<span class="hl sym">,</span> rho<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Calculate the temperature of air, when considered a real gas mixture, given the pressure and density.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param p: The pressure of the air.</span>
+<span class="hl str">    :param rho: The density of the air.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return T: The temperature of the air.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    rho0 <span class="hl sym">=</span> constants<span class="hl sym">.</span>rho0
+    p0 <span class="hl sym">=</span> constants<span class="hl sym">.</span>p0
+    T0 <span class="hl sym">=</span> constants<span class="hl sym">.</span>T0
+    R <span class="hl sym">=</span> constants<span class="hl sym">.</span>R
+
+    Y <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">log10</span><span class="hl sym">(</span>rho <span class="hl sym">/</span> rho0<span class="hl sym">)</span>
+    X <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">log10</span><span class="hl sym">(</span>p <span class="hl sym">/</span> p0<span class="hl sym">)</span>
+    Z <span class="hl sym">=</span> X <span class="hl sym">-</span> Y
+
+    <span class="hl kwa">if</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">0.25</span> <span class="hl kwa">and</span> <span class="hl sym">-</span><span class="hl num">7.0</span> <span class="hl sym">&lt;=</span> Y <span class="hl sym">&lt;=</span> <span class="hl num">3.0</span><span class="hl sym">:</span>
+        T <span class="hl sym">=</span> p <span class="hl sym">/ (</span>rho <span class="hl sym">*</span> R<span class="hl sym">)</span>
+    <span class="hl kwa">elif</span> Z <span class="hl sym">&gt;</span> <span class="hl num">0.25</span> <span class="hl kwa">and</span> <span class="hl sym">-</span><span class="hl num">7.0</span> <span class="hl sym">&lt;=</span> Y <span class="hl sym">&lt;=</span> <span class="hl num">3.0</span><span class="hl sym">:</span>
+        out_dict <span class="hl sym">=</span> correlation_coefficients<span class="hl sym">.</span><span class="hl kwd">load_temperature_coefficients</span><span class="hl sym">(</span>Y<span class="hl sym">,</span> Z<span class="hl sym">)</span>
+        coefficients <span class="hl sym">=</span> out_dict<span class="hl sym">[</span><span class="hl str">'coefficients'</span><span class="hl sym">]</span>
+        sign <span class="hl sym">=</span> out_dict<span class="hl sym">[</span><span class="hl str">'sign'</span><span class="hl sym">]</span>
+        gamma <span class="hl sym">=</span> <span class="hl kwd">get_gamma</span><span class="hl sym">(</span>coefficients<span class="hl sym">,</span> Y<span class="hl sym">,</span> Z<span class="hl sym">,</span> sign<span class="hl sym">)</span>
+        T <span class="hl sym">=</span> T0 <span class="hl sym">*</span> numpy<span class="hl sym">.</span><span class="hl kwd">exp</span><span class="hl sym">(</span>numpy<span class="hl sym">.</span><span class="hl kwd">log</span><span class="hl sym">(</span><span class="hl num">10</span><span class="hl sym">) *</span> gamma<span class="hl sym">)</span>
+    <span class="hl kwa">else</span><span class="hl sym">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">'Y, and therefore rho, is out of allowable range.'</span>
+        <span class="hl kwa">print</span> <span class="hl str">'Y: '</span><span class="hl sym">,</span> Y
+
+    <span class="hl kwa">return</span> T
+
+<span class="hl kwa">def</span> <span class="hl kwd">calculate_u</span><span class="hl sym">(</span>u1<span class="hl sym">,</span> rho1<span class="hl sym">,</span> rho2<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Calculate the velocity behind a normal shock wave in inviscid equilibrium flow given the</span>
+<span class="hl str">    upstream velocity and density and the downstream density.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param u1: The upstream velocity</span>
+<span class="hl str">    :param rho1: The upstream density.</span>
+<span class="hl str">    :param rho2: The downstream density.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return u2: The downstream velocity.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    u2 <span class="hl sym">=</span> u1 <span class="hl sym">*</span> rho1 <span class="hl sym">/</span> rho2
+    <span class="hl kwa">return</span> u2
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 2.10, http://www.andre-simon.de/-->

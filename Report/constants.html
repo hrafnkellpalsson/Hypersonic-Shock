@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>constants.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">Constants needed for project 6.</span>
+<span class="hl str">All constants are in standard SI units, except for the altitude list.</span>
+<span class="hl str">&quot;&quot;&quot;</span>
+
+<span class="hl slc"># 3rd party imports</span>
+<span class="hl kwa">import</span> numpy
+
+<span class="hl slc"># Value obtained from http://en.wikipedia.org/wiki/Gas_constant</span>
+R <span class="hl sym">=</span> <span class="hl num">287.058</span>
+
+<span class="hl slc"># On page 2 of the 1987 Srinivasan report it says that the reference conditions they use</span>
+<span class="hl slc"># are at 1 atm and 273.15K. XZ says we can use the perfect gas relation to compute other</span>
+<span class="hl slc"># reference conditions. Value of atmospheric pressure in Pa is obtained from</span>
+<span class="hl slc"># http://en.wikipedia.org/wiki/Atmospheric_pressure.</span>
+p0 <span class="hl sym">=</span> <span class="hl num">101325</span>
+T0 <span class="hl sym">=</span> <span class="hl num">273.15</span>
+rho0 <span class="hl sym">=</span> p0 <span class="hl sym">/ (</span>R <span class="hl sym">*</span> T0<span class="hl sym">)</span>
+
+<span class="hl slc"># When we can treat the air as perfect in the project, and only then, the values of the</span>
+<span class="hl slc"># specific heats are useful. Turns out they are only used for unit testing.</span>
+<span class="hl slc"># Value for c_p is obtained from http://en.wikipedia.org/wiki/Specific_heat</span>
+c_p <span class="hl sym">=</span> <span class="hl num">1003.5</span>
+<span class="hl slc"># Value for gamma is obtained from http://en.wikipedia.org/wiki/Heat_capacity_ratio</span>
+gamma <span class="hl sym">=</span> <span class="hl num">1.403</span>
+c_v <span class="hl sym">=</span> c_p <span class="hl sym">/</span> gamma
+
+<span class="hl slc"># Converstion from feet to meters.</span>
+feet_to_m <span class="hl sym">=</span> <span class="hl num">0.3048</span>
+
+<span class="hl slc"># The altitude, in feet, on figures 14.4 and 14.5 page 609 and 610 in Anderson.</span>
+altitude <span class="hl sym">= [</span><span class="hl str">'35.900'</span><span class="hl sym">,</span> <span class="hl str">'59.800'</span><span class="hl sym">,</span> <span class="hl str">'82.200'</span><span class="hl sym">,</span> <span class="hl str">'100.000'</span><span class="hl sym">,</span> <span class="hl str">'120.300'</span><span class="hl sym">,</span>
+            <span class="hl str">'154.800'</span><span class="hl sym">,</span> <span class="hl str">'173.500'</span><span class="hl sym">,</span> <span class="hl str">'200.100'</span><span class="hl sym">,</span> <span class="hl str">'230.400'</span><span class="hl sym">,</span> <span class="hl str">'259.700'</span><span class="hl sym">,</span>
+            <span class="hl str">'294.800'</span><span class="hl sym">,</span> <span class="hl str">'322.900'</span><span class="hl sym">]</span>
+
+<span class="hl slc"># Upstream values of pressure corresponding to the altitude.</span>
+<span class="hl slc"># Values are obtained from tables in 1963 Nasa technical report by Huber (ref. [165] Anderson)</span>
+p1_upstream <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">0.225</span><span class="hl sym">,</span> <span class="hl num">0.7135E-1</span><span class="hl sym">,</span> <span class="hl num">0.2438E-1</span><span class="hl sym">,</span> <span class="hl num">0.1067E-1</span><span class="hl sym">,</span> <span class="hl num">0.4462E-2</span><span class="hl sym">,</span>
+                           <span class="hl num">0.1161E-2</span><span class="hl sym">,</span> <span class="hl num">0.5826E-3</span><span class="hl sym">,</span> <span class="hl num">2.052E-4</span><span class="hl sym">,</span> <span class="hl num">5.042E-5</span><span class="hl sym">,</span> <span class="hl num">9.631E-6</span><span class="hl sym">,</span>
+                           <span class="hl num">1.064E-6</span><span class="hl sym">,</span> <span class="hl num">2.119E-7</span><span class="hl sym">]) *</span> p0
+
+<span class="hl slc"># Upstream values of temperature corresponding to the altitude.</span>
+<span class="hl slc"># Values are obtained from tables in 1963 Nasa technical report by Huber (ref. [165] Anderson)</span>
+T1_upstream <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">217</span><span class="hl sym">.,</span> <span class="hl num">217</span><span class="hl sym">.,</span> <span class="hl num">217</span><span class="hl sym">.,</span> <span class="hl num">233</span><span class="hl sym">.,</span> <span class="hl num">252</span><span class="hl sym">.,</span>
+                           <span class="hl num">283</span><span class="hl sym">.,</span> <span class="hl num">283</span><span class="hl sym">.,</span> <span class="hl num">247</span><span class="hl sym">.,</span> <span class="hl num">205</span><span class="hl sym">.,</span> <span class="hl num">166</span><span class="hl sym">.,</span>
+                           <span class="hl num">166</span><span class="hl sym">.,</span> <span class="hl num">199</span><span class="hl sym">.])</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 2.10, http://www.andre-simon.de/-->

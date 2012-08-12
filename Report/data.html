@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>data.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">Arrays of upstream velocity where one line in the array corresponds to the velocity range</span>
+<span class="hl str">for a single curve.</span>
+<span class="hl str"></span>
+<span class="hl str">A function for reading csv files outputted by Engauge. This function is then applied to all</span>
+<span class="hl str">the engauge csv files and the resulting data is stored.</span>
+<span class="hl str">&quot;&quot;&quot;</span>
+
+<span class="hl slc"># Python library imports</span>
+<span class="hl kwa">import</span> os
+<span class="hl slc"># 3rd party imports</span>
+<span class="hl kwa">import</span> numpy
+
+<span class="hl kwa">def</span> <span class="hl kwd">read_engauge_csv</span><span class="hl sym">(</span><span class="hl kwb">file</span><span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Read the values from a csv file by Engauge with n lines into a (n-1) by 2 numpy.array.</span>
+<span class="hl str">    n-1 because we skip the header.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param file: Full path to a csv file outputted by Engauge.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return engauge_values: An (n-1) by 2 numpy.array with numerical value from the Engauge</span>
+<span class="hl str">    csv file.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl kwb">file</span> <span class="hl sym">=</span> <span class="hl kwb">open</span><span class="hl sym">(</span><span class="hl kwb">file</span><span class="hl sym">)</span>
+    lines <span class="hl sym">=</span> <span class="hl kwb">file</span><span class="hl sym">.</span><span class="hl kwd">readlines</span><span class="hl sym">()</span>
+    number_of_lines <span class="hl sym">=</span> <span class="hl kwb">len</span><span class="hl sym">(</span>lines<span class="hl sym">)</span>
+    number_of_entries <span class="hl sym">=</span> number_of_lines <span class="hl sym">-</span> <span class="hl num">1</span>
+    engauge_values <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">empty</span><span class="hl sym">([</span>number_of_entries<span class="hl sym">,</span> <span class="hl num">2</span><span class="hl sym">])</span>
+
+    <span class="hl kwa">for</span> i<span class="hl sym">,</span> line <span class="hl kwa">in</span> <span class="hl kwb">enumerate</span><span class="hl sym">(</span>lines<span class="hl sym">[</span><span class="hl num">1</span><span class="hl sym">:]):</span>
+        xyvalues <span class="hl sym">=</span> line<span class="hl sym">.</span><span class="hl kwd">split</span><span class="hl sym">(</span><span class="hl str">','</span><span class="hl sym">)</span>
+
+        xvalue <span class="hl sym">=</span> xyvalues<span class="hl sym">[</span><span class="hl num">0</span><span class="hl sym">]</span>
+        xvalue <span class="hl sym">=</span> xvalue<span class="hl sym">.</span><span class="hl kwd">rstrip</span><span class="hl sym">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl sym">)</span>
+        xvalue <span class="hl sym">=</span> <span class="hl kwb">float</span><span class="hl sym">(</span>xvalue<span class="hl sym">)</span>
+        engauge_values<span class="hl sym">[</span>i<span class="hl sym">,</span><span class="hl num">0</span><span class="hl sym">] =</span> xvalue
+
+        yvalue <span class="hl sym">=</span> xyvalues<span class="hl sym">[</span><span class="hl num">1</span><span class="hl sym">]</span>
+        xvalue <span class="hl sym">=</span> yvalue<span class="hl sym">.</span><span class="hl kwd">rstrip</span><span class="hl sym">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl sym">)</span>
+        yvalue <span class="hl sym">=</span> <span class="hl kwb">float</span><span class="hl sym">(</span>yvalue<span class="hl sym">)</span>
+        engauge_values<span class="hl sym">[</span>i<span class="hl sym">,</span><span class="hl num">1</span><span class="hl sym">] =</span> yvalue
+
+    <span class="hl kwa">return</span> engauge_values
+
+<span class="hl kwa">def</span> <span class="hl kwd">read_multiple_engauge_csv</span><span class="hl sym">(</span><span class="hl kwb">dir</span><span class="hl sym">,</span> filenames<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Read values from multiple Engauge csv files into a list.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param dir: The directory of the Engauge csv files.</span>
+<span class="hl str">    :param filenames: A list of filenames of Engauge csv files, including the .csv ending.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    engauge_list <span class="hl sym">= []</span>
+    <span class="hl kwa">for</span> filename <span class="hl kwa">in</span> filenames<span class="hl sym">:</span>
+        engauge_values <span class="hl sym">=</span> <span class="hl kwd">read_engauge_csv</span><span class="hl sym">(</span>os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">join</span><span class="hl sym">(</span><span class="hl kwb">dir</span><span class="hl sym">,</span> filename<span class="hl sym">))</span>
+        engauge_list<span class="hl sym">.</span><span class="hl kwd">append</span><span class="hl sym">(</span>engauge_values<span class="hl sym">)</span>
+
+    <span class="hl kwa">return</span> engauge_list
+
+<span class="hl kwa">def</span> <span class="hl kwd">read_single_engauge_csv</span><span class="hl sym">(</span><span class="hl kwb">file</span><span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Read the values from a csv file by Engauge with n lines into a (n-1) by 2 numpy.array.</span>
+<span class="hl str">    n-1 because we skip the header.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param file: Full path to a csv file outputted by Engauge.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return engauge_values: An (n-1) by 2 numpy.array with numerical value from the Engauge</span>
+<span class="hl str">    csv file.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl kwb">file</span> <span class="hl sym">=</span> <span class="hl kwb">open</span><span class="hl sym">(</span><span class="hl kwb">file</span><span class="hl sym">)</span>
+    lines <span class="hl sym">=</span> <span class="hl kwb">file</span><span class="hl sym">.</span><span class="hl kwd">readlines</span><span class="hl sym">()</span>
+    number_of_lines <span class="hl sym">=</span> <span class="hl kwb">len</span><span class="hl sym">(</span>lines<span class="hl sym">)</span>
+    number_of_entries <span class="hl sym">=</span> number_of_lines <span class="hl sym">-</span> <span class="hl num">1</span>
+    number_of_columns <span class="hl sym">=</span> <span class="hl num">13</span>
+    engauge_values <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">empty</span><span class="hl sym">([</span>number_of_entries<span class="hl sym">,</span> number_of_columns<span class="hl sym">])</span>
+
+    <span class="hl kwa">for</span> i<span class="hl sym">,</span> line <span class="hl kwa">in</span> <span class="hl kwb">enumerate</span><span class="hl sym">(</span>lines<span class="hl sym">[</span><span class="hl num">1</span><span class="hl sym">:]):</span>
+        values <span class="hl sym">=</span> line<span class="hl sym">.</span><span class="hl kwd">split</span><span class="hl sym">(</span><span class="hl str">','</span><span class="hl sym">)</span>
+
+        xvalue <span class="hl sym">=</span> values<span class="hl sym">[</span><span class="hl num">0</span><span class="hl sym">]</span>
+        xvalue <span class="hl sym">=</span> xvalue<span class="hl sym">.</span><span class="hl kwd">rstrip</span><span class="hl sym">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl sym">)</span>
+        xvalue <span class="hl sym">=</span> <span class="hl kwb">float</span><span class="hl sym">(</span>xvalue<span class="hl sym">)</span>
+        engauge_values<span class="hl sym">[</span>i<span class="hl sym">,</span><span class="hl num">0</span><span class="hl sym">] =</span> xvalue
+
+        <span class="hl kwa">for</span> j <span class="hl kwa">in</span> <span class="hl kwb">range</span><span class="hl sym">(</span>number_of_columns<span class="hl sym">-</span><span class="hl num">1</span><span class="hl sym">):</span>
+            data_index <span class="hl sym">=</span> j <span class="hl sym">+</span> <span class="hl num">1</span>
+            <span class="hl kwa">if</span> data_index <span class="hl sym">&gt;</span> <span class="hl num">12</span><span class="hl sym">:</span>
+                <span class="hl kwa">print</span> <span class="hl str">'jasveimertha'</span>
+            data_value <span class="hl sym">=</span> values<span class="hl sym">[</span>data_index<span class="hl sym">]</span>
+            data_value <span class="hl sym">=</span> data_value<span class="hl sym">.</span><span class="hl kwd">rstrip</span><span class="hl sym">(</span><span class="hl str">'</span><span class="hl esc">\n</span><span class="hl str">'</span><span class="hl sym">)</span>
+            data_value <span class="hl sym">=</span> <span class="hl kwb">float</span><span class="hl sym">(</span>data_value<span class="hl sym">)</span>
+            engauge_values<span class="hl sym">[</span>i<span class="hl sym">,</span>data_index<span class="hl sym">] =</span> data_value
+
+    <span class="hl kwa">return</span> engauge_values
+
+
+engauge_dir <span class="hl sym">=</span> os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">abspath</span><span class="hl sym">(</span>os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">join</span><span class="hl sym">(</span>os<span class="hl sym">.</span>path<span class="hl sym">.</span><span class="hl kwd">dirname</span><span class="hl sym">(</span>__file__<span class="hl sym">),</span><span class="hl str">'..'</span><span class="hl sym">,</span><span class="hl str">'engauge_csv'</span><span class="hl sym">))</span>
+
+csv_filenames_144a <span class="hl sym">= [</span><span class="hl str">'144a_35900.csv'</span><span class="hl sym">,</span> <span class="hl str">'144a_154800.csv'</span><span class="hl sym">,</span> <span class="hl str">'144a_322900.csv'</span><span class="hl sym">]</span>
+engauge_list_144a <span class="hl sym">=</span> <span class="hl kwd">read_multiple_engauge_csv</span><span class="hl sym">(</span>engauge_dir<span class="hl sym">,</span> csv_filenames_144a<span class="hl sym">)</span>
+
+csv_filenames_144b <span class="hl sym">= [</span><span class="hl str">'144b_35900.csv'</span><span class="hl sym">,</span> <span class="hl str">'144b_154800.csv'</span><span class="hl sym">,</span> <span class="hl str">'144b_322900.csv'</span><span class="hl sym">]</span>
+engauge_list_144b <span class="hl sym">=</span> <span class="hl kwd">read_multiple_engauge_csv</span><span class="hl sym">(</span>engauge_dir<span class="hl sym">,</span> csv_filenames_144b<span class="hl sym">)</span>
+
+csv_filenames_145a <span class="hl sym">= [</span><span class="hl str">'145a_35900.csv'</span><span class="hl sym">,</span> <span class="hl str">'145a_154800.csv'</span><span class="hl sym">,</span> <span class="hl str">'145a_322900.csv'</span><span class="hl sym">]</span>
+engauge_list_145a <span class="hl sym">=</span> <span class="hl kwd">read_multiple_engauge_csv</span><span class="hl sym">(</span>engauge_dir<span class="hl sym">,</span> csv_filenames_145a<span class="hl sym">)</span>
+
+csv_filenames_145b <span class="hl sym">= [</span><span class="hl str">'145b_35900.csv'</span><span class="hl sym">,</span> <span class="hl str">'145b_154800.csv'</span><span class="hl sym">,</span> <span class="hl str">'145b_322900.csv'</span><span class="hl sym">]</span>
+engauge_list_145b <span class="hl sym">=</span> <span class="hl kwd">read_multiple_engauge_csv</span><span class="hl sym">(</span>engauge_dir<span class="hl sym">,</span> csv_filenames_145b<span class="hl sym">)</span>
+
+
+step_size <span class="hl sym">=</span> <span class="hl num">0.2</span>
+u1_vector_feet_35900 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">18.3</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_59800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">19.4</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_82200 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">20.8</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_100000 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_120300 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_154800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_173500 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_200100 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_230400 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_259700 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_294800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_322900 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_144a_feet <span class="hl sym">= [</span>u1_vector_feet_35900<span class="hl sym">,</span>
+                u1_vector_feet_59800<span class="hl sym">,</span>
+                u1_vector_feet_82200<span class="hl sym">,</span>
+                u1_vector_feet_100000<span class="hl sym">,</span>
+                u1_vector_feet_120300<span class="hl sym">,</span>
+                u1_vector_feet_154800<span class="hl sym">,</span>
+                u1_vector_feet_173500<span class="hl sym">,</span>
+                u1_vector_feet_200100<span class="hl sym">,</span>
+                u1_vector_feet_230400<span class="hl sym">,</span>
+                u1_vector_feet_259700<span class="hl sym">,</span>
+                u1_vector_feet_294800<span class="hl sym">,</span>
+                u1_vector_feet_322900<span class="hl sym">]</span>
+
+
+step_size <span class="hl sym">=</span> <span class="hl num">0.2</span>
+u1_vector_feet_35900 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">28.2</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_59800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">30</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_82200 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">32.7</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_100000 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">35</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_120300 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">37.9</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_154800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">41.3</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_173500 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">43.3</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_200100 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_230400 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_259700 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_294800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_322900 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_144b_feet <span class="hl sym">= [</span>u1_vector_feet_35900<span class="hl sym">,</span>
+                u1_vector_feet_59800<span class="hl sym">,</span>
+                u1_vector_feet_82200<span class="hl sym">,</span>
+                u1_vector_feet_100000<span class="hl sym">,</span>
+                u1_vector_feet_120300<span class="hl sym">,</span>
+                u1_vector_feet_154800<span class="hl sym">,</span>
+                u1_vector_feet_173500<span class="hl sym">,</span>
+                u1_vector_feet_200100<span class="hl sym">,</span>
+                u1_vector_feet_230400<span class="hl sym">,</span>
+                u1_vector_feet_259700<span class="hl sym">,</span>
+                u1_vector_feet_294800<span class="hl sym">,</span>
+                u1_vector_feet_322900<span class="hl sym">]</span>
+
+
+step_size <span class="hl sym">=</span> <span class="hl num">0.2</span>
+u1_vector_feet_35900 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_59800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_82200 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_100000 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_120300 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_154800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_173500 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_200100 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_230400 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_259700 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">22</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_294800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">20.9</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_322900 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">3.5</span><span class="hl sym">,</span> <span class="hl num">19.6</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_145a_feet <span class="hl sym">= [</span>u1_vector_feet_35900<span class="hl sym">,</span>
+                u1_vector_feet_59800<span class="hl sym">,</span>
+                u1_vector_feet_82200<span class="hl sym">,</span>
+                u1_vector_feet_100000<span class="hl sym">,</span>
+                u1_vector_feet_120300<span class="hl sym">,</span>
+                u1_vector_feet_154800<span class="hl sym">,</span>
+                u1_vector_feet_173500<span class="hl sym">,</span>
+                u1_vector_feet_200100<span class="hl sym">,</span>
+                u1_vector_feet_230400<span class="hl sym">,</span>
+                u1_vector_feet_259700<span class="hl sym">,</span>
+                u1_vector_feet_294800<span class="hl sym">,</span>
+                u1_vector_feet_322900<span class="hl sym">]</span>
+
+
+step_size <span class="hl sym">=</span> <span class="hl num">0.2</span>
+u1_vector_feet_35900 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">28.5</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_59800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">30.5</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_82200 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">33</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_100000 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">35.5</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_120300 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">38.5</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_154800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">42</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_173500 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">44.5</span> <span class="hl sym">+</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_200100 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_230400 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_259700 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_294800 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_vector_feet_322900 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">arange</span><span class="hl sym">(</span><span class="hl num">16</span><span class="hl sym">.,</span> <span class="hl num">46</span><span class="hl sym">. +</span> step_size<span class="hl sym">/</span><span class="hl num">2</span><span class="hl sym">.,</span> step_size<span class="hl sym">) *</span> <span class="hl num">1</span>E3
+u1_145b_feet <span class="hl sym">= [</span>u1_vector_feet_35900<span class="hl sym">,</span>
+                u1_vector_feet_59800<span class="hl sym">,</span>
+                u1_vector_feet_82200<span class="hl sym">,</span>
+                u1_vector_feet_100000<span class="hl sym">,</span>
+                u1_vector_feet_120300<span class="hl sym">,</span>
+                u1_vector_feet_154800<span class="hl sym">,</span>
+                u1_vector_feet_173500<span class="hl sym">,</span>
+                u1_vector_feet_200100<span class="hl sym">,</span>
+                u1_vector_feet_230400<span class="hl sym">,</span>
+                u1_vector_feet_259700<span class="hl sym">,</span>
+                u1_vector_feet_294800<span class="hl sym">,</span>
+                u1_vector_feet_322900<span class="hl sym">]</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 2.10, http://www.andre-simon.de/-->

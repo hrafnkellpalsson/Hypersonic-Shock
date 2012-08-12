@@ -1,0 +1,816 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>correlation_coefficients.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">The coefficients for the Srinivasan-Tannehill-Weilmuenster correlations, p(e, rho) and T(p, rho), are written out.</span>
+<span class="hl str">A methods to extract the correct coefficients based on the values of Y and Z.</span>
+<span class="hl str">&quot;&quot;&quot;</span>
+
+<span class="hl slc"># 3rd party imports</span>
+<span class="hl kwa">import</span> numpy
+
+<span class="hl kwa">def</span> <span class="hl kwd">load_pressure_coefficients</span><span class="hl sym">(</span>Y<span class="hl sym">,</span> Z<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Load the correct set of coefficients for the Srinivasan-Tannehill-Weilmuenster p(e, rho) correlation,</span>
+<span class="hl str">    for given values of Y and Z.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param Y: Y paramater in the p(e, rho) correlation.</span>
+<span class="hl str">    :param Z: Z paramater in the p(e, rho) correlation.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return coefficients: The correct set of coefficients.</span>
+<span class="hl str"></span>
+<span class="hl str">    Note: The naming convention for the coefficient vectors is as folllows:</span>
+<span class="hl str">        The first &quot;subscript&quot; refers to the table number and the second &quot;subscript&quot; refers to the Z column</span>
+<span class="hl str">        in that table.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl slc"># Table A.1</span>
+    <span class="hl kwa">if</span> <span class="hl sym">-</span><span class="hl num">7.0</span> <span class="hl sym">&lt;=</span> Y <span class="hl sym">&lt;= -</span><span class="hl num">4.5</span><span class="hl sym">:</span>
+        <span class="hl kwa">if</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">0.65</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A11
+        <span class="hl kwa">elif</span> <span class="hl num">0.65</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">1.50</span><span class="hl sym">:</span>
+            sign <span class="hl sym">= -</span><span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A12
+        <span class="hl kwa">elif</span> <span class="hl num">1.50</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">2.20</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A13
+        <span class="hl kwa">elif</span> <span class="hl num">2.20</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">3.05</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A14
+        <span class="hl kwa">elif</span> <span class="hl num">3.05</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">3.40</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A15
+        <span class="hl kwa">elif</span> <span class="hl num">3.40</span> <span class="hl sym">&lt;</span> Z<span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A16
+        <span class="hl kwa">else</span><span class="hl sym">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Something's wrong, we shouldn't be able to get here.&quot;</span>
+    <span class="hl slc"># Table A.2</span>
+    <span class="hl kwa">elif</span> <span class="hl sym">-</span><span class="hl num">4.5</span> <span class="hl sym">&lt;</span> Y <span class="hl sym">&lt;= -</span><span class="hl num">0.5</span><span class="hl sym">:</span>
+        <span class="hl kwa">if</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">0.65</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A21
+        <span class="hl kwa">elif</span> <span class="hl num">0.65</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">1.50</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A22
+        <span class="hl kwa">elif</span> <span class="hl num">1.50</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">2.22</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A23
+        <span class="hl kwa">elif</span> <span class="hl num">2.22</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">2.95</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A24
+        <span class="hl kwa">elif</span> <span class="hl num">2.95</span> <span class="hl sym">&lt;</span> Z<span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A25
+        <span class="hl kwa">else</span><span class="hl sym">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Something's wrong, we shouldn't be able to get here.&quot;</span>
+    <span class="hl slc"># Table A.3</span>
+    <span class="hl kwa">elif</span> <span class="hl sym">-</span><span class="hl num">0.5</span> <span class="hl sym">&lt;</span> Y <span class="hl sym">&lt;=</span> <span class="hl num">3.0</span><span class="hl sym">:</span>
+        <span class="hl kwa">if</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">0.65</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A31
+        <span class="hl kwa">elif</span> <span class="hl num">0.65</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">1.70</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A32
+        <span class="hl kwa">elif</span> <span class="hl num">1.70</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">2.35</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A33
+        <span class="hl kwa">elif</span> <span class="hl num">2.35</span> <span class="hl sym">&lt;</span> Z<span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A34
+        <span class="hl kwa">else</span><span class="hl sym">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Something's wrong, we shouldn't be able to get here.&quot;</span>
+
+    <span class="hl kwa">else</span><span class="hl sym">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">'The value of Y, and therefore rho, is out allowable range'</span>
+
+    out_dict <span class="hl sym">= {</span><span class="hl str">'coefficients'</span><span class="hl sym">:</span> coefficients<span class="hl sym">,</span>
+                <span class="hl str">'sign'</span><span class="hl sym">:</span> sign<span class="hl sym">}</span>
+    <span class="hl kwa">return</span> out_dict
+
+<span class="hl kwa">def</span> <span class="hl kwd">load_temperature_coefficients</span><span class="hl sym">(</span>Y<span class="hl sym">,</span> Z<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Load the correct set of coefficients for the Srinivasan-Tannehill-Weilmuenster T(p, rho) correlation,</span>
+<span class="hl str">    for given values of Y and Z.</span>
+<span class="hl str"></span>
+<span class="hl str">    :param Y: Y paramater in the T(p, rho) correlation.</span>
+<span class="hl str">    :param Z: Z paramater in the T(p, rho) correlation.</span>
+<span class="hl str"></span>
+<span class="hl str">    :return coefficients: The correct set of coefficients.</span>
+<span class="hl str"></span>
+<span class="hl str">    Note: The naming convention for the coefficient vectors is as folllows:</span>
+<span class="hl str">        The first &quot;subscript&quot; refers to the table number and the second &quot;subscript&quot; refers to the Z column</span>
+<span class="hl str">        in that table.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+    <span class="hl slc"># Table A.10</span>
+    <span class="hl kwa">if</span> <span class="hl sym">-</span><span class="hl num">7.0</span> <span class="hl sym">&lt;=</span> Y <span class="hl sym">&lt;= -</span><span class="hl num">4.5</span><span class="hl sym">:</span>
+        <span class="hl kwa">if</span> <span class="hl num">0.25</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">0.95</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A101
+        <span class="hl kwa">elif</span> <span class="hl num">0.95</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">1.40</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A102
+        <span class="hl kwa">elif</span> <span class="hl num">1.40</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">1.95</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A103
+        <span class="hl kwa">elif</span> <span class="hl num">1.95</span> <span class="hl sym">&lt;</span> Z<span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A104
+        <span class="hl kwa">else</span><span class="hl sym">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Something's wrong, we shouldn't be able to get here.&quot;</span>
+    <span class="hl slc"># Table A.11</span>
+    <span class="hl kwa">elif</span> <span class="hl sym">-</span><span class="hl num">4.5</span> <span class="hl sym">&lt;</span> Y <span class="hl sym">&lt;= -</span><span class="hl num">0.5</span><span class="hl sym">:</span>
+        <span class="hl kwa">if</span> <span class="hl num">0.25</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">0.95</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A111
+        <span class="hl kwa">elif</span> <span class="hl num">0.95</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">1.45</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A112
+        <span class="hl kwa">elif</span> <span class="hl num">1.45</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">2.05</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A113
+        <span class="hl kwa">elif</span> <span class="hl num">2.05</span> <span class="hl sym">&lt;</span> Z<span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A114
+        <span class="hl kwa">else</span><span class="hl sym">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Something's wrong, we shouldn't be able to get here.&quot;</span>
+    <span class="hl slc"># Table A.12</span>
+    <span class="hl kwa">elif</span> <span class="hl sym">-</span><span class="hl num">0.5</span> <span class="hl sym">&lt;</span> Y <span class="hl sym">&lt;=</span> <span class="hl num">3.0</span><span class="hl sym">:</span>
+        <span class="hl kwa">if</span> <span class="hl num">0.25</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">1.00</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A121
+        <span class="hl kwa">elif</span> <span class="hl num">1.00</span> <span class="hl sym">&lt;</span> Z <span class="hl sym">&lt;=</span> <span class="hl num">1.45</span><span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A122
+        <span class="hl kwa">elif</span> <span class="hl num">1.45</span> <span class="hl sym">&lt;</span> Z<span class="hl sym">:</span>
+            sign <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+            coefficients <span class="hl sym">=</span> A123
+        <span class="hl kwa">else</span><span class="hl sym">:</span>
+            <span class="hl kwa">print</span> <span class="hl str">&quot;Something's wrong, we shouldn't be able to get here.&quot;</span>
+
+    <span class="hl kwa">else</span><span class="hl sym">:</span>
+        <span class="hl kwa">print</span> <span class="hl str">'The value of Y, and therefore rho, is out allowable range'</span>
+
+    out_dict <span class="hl sym">= {</span><span class="hl str">'coefficients'</span><span class="hl sym">:</span> coefficients<span class="hl sym">,</span>
+                <span class="hl str">'sign'</span><span class="hl sym">:</span> sign<span class="hl sym">}</span>
+    <span class="hl kwa">return</span> out_dict
+
+A11 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">1.3965</span><span class="hl sym">,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A12 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">1.52792</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.26953E-2</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">6.13514E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">5.08262E-2</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">5.49384E-3</span><span class="hl sym">,</span>
+                   <span class="hl num">6.31835E-1</span><span class="hl sym">,</span>
+                   <span class="hl num">4.75120E-5</span><span class="hl sym">,</span>
+                   <span class="hl num">3.34012E-2</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">3.18468E-4</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">2.19921E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">4.96286</span>E1<span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.17932</span>E1<span class="hl sym">,</span>
+                   <span class="hl num">6.91028</span>E1<span class="hl sym">,</span>
+                   <span class="hl num">4.40405</span>E1<span class="hl sym">,</span>
+                   <span class="hl num">5.09249</span><span class="hl sym">,</span>
+                   <span class="hl num">1.37308</span>E1<span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.40326</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.78726</span>E1<span class="hl sym">,</span>
+                   <span class="hl num">2.08988E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.86943</span>E1<span class="hl sym">,</span>
+                   <span class="hl num">24.60452</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">2.0</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">2.093022</span>E1<span class="hl sym">,</span>
+                   <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A13 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">1.70333</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">5.08545E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">2.46299</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">4.45617E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">8.95298E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.10204</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">2.29618E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">9.89727E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.89186E-4</span><span class="hl sym">,</span>
+                    <span class="hl num">1.62903</span><span class="hl sym">,</span>
+                    <span class="hl num">1.86797</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">5.19662E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.41338</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">4.34837E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">9.16089E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">1.02035</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.52082E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">9.70762E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">3.46482E-4</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.3946</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.42762</span>E2<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.647088</span><span class="hl sym">,</span>
+                    <span class="hl num">7.660312</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">8.259346E-1</span><span class="hl sym">])</span>
+
+A14 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">2.24374</span><span class="hl sym">,</span>
+                   <span class="hl num">1.03073E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">5.32238E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">5.59852E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">3.56484E-3</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">4.80156E-2</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.01359E-4</span><span class="hl sym">,</span>
+                   <span class="hl num">1.06794E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">1.59127E-4</span><span class="hl sym">,</span>
+                   <span class="hl num">3.66035E-2</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">5.70378</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">3.10056E-1</span><span class="hl sym">,</span>
+                   <span class="hl num">5.01094</span><span class="hl sym">,</span>
+                   <span class="hl num">1.80411E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">9.49361E-3</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.40331</span><span class="hl sym">,</span>
+                   <span class="hl num">1.94839E-3</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">2.79718E-2</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">2.24908E-4</span><span class="hl sym">,</span>
+                   <span class="hl num">1.20278E-1</span><span class="hl sym">,</span>
+                   <span class="hl num">1.139755</span>E2<span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">4.985467</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">4.223833</span>E1<span class="hl sym">,</span>
+                   <span class="hl num">2.009706</span><span class="hl sym">])</span>
+
+A15 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">0.20807</span>E2<span class="hl sym">,</span>
+                    <span class="hl num">0.40197</span><span class="hl sym">,</span>
+                    <span class="hl num">0.22591</span>E2<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.25660</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.95833E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.77174</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">0.23966E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">0.4606E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">0.33671E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">0.878</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.21737</span>E3<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.46927</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">0.18101</span>E3<span class="hl sym">,</span>
+                    <span class="hl num">0.26621</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.34759E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.50019</span>E2<span class="hl sym">,</span>
+                    <span class="hl num">0.64681E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.38381</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.70391E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">0.45795</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">0.4544373</span>E3<span class="hl sym">,</span>
+                    <span class="hl num">0.1250133</span>E2<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.1376001</span>E3<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">0.3641774</span>E1<span class="hl sym">])</span>
+
+A16 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">5.22951</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">4.00011E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">4.56439</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">2.24484E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">3.73775E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.29756</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">2.43161E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.79517E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">2.24755E-4</span><span class="hl sym">,</span>
+                    <span class="hl num">1.22998</span><span class="hl sym">,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A21 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">1.398</span><span class="hl sym">,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A22 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">1.39123</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">4.08321E-3</span><span class="hl sym">,</span>
+                   <span class="hl num">1.42545E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">1.41769E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">2.57225E-4</span><span class="hl sym">,</span>
+                   <span class="hl num">6.2555E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">6.52912E-4</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">7.83637E-3</span><span class="hl sym">,</span>
+                   <span class="hl num">8.46912E-5</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">9.78720E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">5.80955</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.82302E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">9.62396</span><span class="hl sym">,</span>
+                   <span class="hl num">1.79619E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">2.30518E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">5.27047</span><span class="hl sym">,</span>
+                   <span class="hl num">1.1872E-2</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">3.65507E-2</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">3.35499E-4</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">9.19897E-1</span><span class="hl sym">,</span>
+                   <span class="hl num">14.2</span><span class="hl sym">,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.00</span>E1<span class="hl sym">,</span>
+                   <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A23 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">1.20784</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.57909E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">5.02307</span><span class="hl sym">,</span>
+                    <span class="hl num">2.87201E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">9.95577E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">3.20619</span><span class="hl sym">,</span>
+                    <span class="hl num">5.23524E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">7.50405E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.45574E-4</span><span class="hl sym">,</span>
+                    <span class="hl num">6.51564E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">6.62841</span><span class="hl sym">,</span>
+                    <span class="hl num">2.77112E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">7.30762</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">7.6823E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">7.19421E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.33161</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">3.62463E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">3.04767E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">1.62777E-4</span><span class="hl sym">,</span>
+                    <span class="hl num">1.66856E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">1.255324</span>E2<span class="hl sym">,</span>
+                    <span class="hl num">2.015335</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">6.390747</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">6.515225E-1</span><span class="hl sym">])</span>
+
+A24 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">2.26460</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">7.82263E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">4.90497</span><span class="hl sym">,</span>
+                    <span class="hl num">7.18096E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">3.06443E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.24750</span><span class="hl sym">,</span>
+                    <span class="hl num">1.74209E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.31641E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">2.84214E-5</span><span class="hl sym">,</span>
+                    <span class="hl num">3.33658E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.47904</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.76627E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">1.35036</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">8.77280E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.13327E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">3.95372</span><span class="hl sym">,</span>
+                    <span class="hl num">7.15487E-4</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">8.96151E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">7.30928E-5</span><span class="hl sym">,</span>
+                    <span class="hl num">3.63229E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">1.788542</span>E2<span class="hl sym">,</span>
+                    <span class="hl num">6.317894</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">6.756741</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.46006</span><span class="hl sym">])</span>
+
+A25 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">1.66904</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.58318E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">1.78350</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">1.54898E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">9.71263E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">5.94108</span><span class="hl sym">,</span>
+                    <span class="hl num">3.97740E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.01335E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">9.04300E-5</span><span class="hl sym">,</span>
+                    <span class="hl num">6.60432E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">8.54690</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">1.17554</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">7.21760</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">7.15723</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">4.16150E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">2.01758</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">1.38147E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">1.08990</span><span class="hl sym">,</span>
+                    <span class="hl num">5.45184E-4</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.86438</span><span class="hl sym">,</span>
+                    <span class="hl num">2.883262</span>E2<span class="hl sym">,</span>
+                    <span class="hl num">1.248536</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">8.816985</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">3.720309</span><span class="hl sym">])</span>
+
+A31 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">1.3988</span><span class="hl sym">,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A32 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">1.37062</span><span class="hl sym">,</span>
+                   <span class="hl num">1.29673E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">1.11418E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">3.26912E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">1.06869E-3</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.06133E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">2.00286E-3</span><span class="hl sym">,</span>
+                   <span class="hl num">1.90251E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">2.38305E-4</span><span class="hl sym">,</span>
+                   <span class="hl num">3.02210E-3</span><span class="hl sym">,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.,</span>
+                   <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A33 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">3.43846E-2</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">2.33584E-1</span><span class="hl sym">,</span>
+                   <span class="hl num">2.85574</span><span class="hl sym">,</span>
+                   <span class="hl num">2.59787E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">10.89927E-3</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.94785</span><span class="hl sym">,</span>
+                   <span class="hl num">4.23659E-3</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">6.73865E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">3.85712E-4</span><span class="hl sym">,</span>
+                   <span class="hl num">4.08518E-1</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">4.20569</span><span class="hl sym">,</span>
+                   <span class="hl num">1.33139E-1</span><span class="hl sym">,</span>
+                   <span class="hl num">4.51236</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.66341E-1</span><span class="hl sym">,</span>
+                   <span class="hl num">1.67787E-3</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.35516</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">1.10022E-3</span><span class="hl sym">,</span>
+                   <span class="hl num">4.91716E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">3.06676E-4</span><span class="hl sym">,</span>
+                   <span class="hl num">7.52509E-2</span><span class="hl sym">,</span>
+                   <span class="hl num">1.757042</span>E2<span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">2.163278</span><span class="hl sym">,</span>
+                   <span class="hl sym">-</span><span class="hl num">8.833702</span>E1<span class="hl sym">,</span>
+                   <span class="hl num">1.897543</span><span class="hl sym">])</span>
+
+A34 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">1.70633</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.48403E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">4.23104</span><span class="hl sym">,</span>
+                    <span class="hl num">1.37290E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">9.10934E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.97292</span><span class="hl sym">,</span>
+                    <span class="hl num">3.85707E-3</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.81830E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">2.69026E-4</span><span class="hl sym">,</span>
+                    <span class="hl num">2.95882E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">3.41580</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.89972</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">4.0858</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">1.30321</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">8.01272E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">1.60826</span>E1<span class="hl sym">,</span>
+                    <span class="hl num">2.75121E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.23386</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.77969E-4</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.08853</span><span class="hl sym">,</span>
+                    <span class="hl num">2.561323</span>E2<span class="hl sym">,</span>
+                    <span class="hl num">1.737089</span>E2<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">9.05889</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">5.838803</span>E1<span class="hl sym">])</span>
+
+A101 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">1.23718E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">1.08623E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">2.24239E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">8.24608E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.17615E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">1.18397</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.87566E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">6.4852E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.19155E-4</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">5.52634E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A102 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">8.12952</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">8.28637E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">2.26904</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">1.41132</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.98633E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.91806</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">2.70066E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">5.78875E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.28103E-4</span><span class="hl sym">,</span>
+                     <span class="hl num">5.62580</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.99845</span><span class="hl sym">,</span>
+                     <span class="hl num">2.26369E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">2.52870</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">7.28448E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">1.09769E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">2.99238</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.83819E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">3.91440E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.51380E-4</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.04463</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.887015</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.908228</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">4.070557</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">2.682347</span>E1<span class="hl sym">])</span>
+
+A103 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">1.98573</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.67225</span><span class="hl sym">,</span>
+                     <span class="hl num">3.76159</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">2.10964</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.40174E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.22215</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">2.31712E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">6.44596E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">9.80275E-5</span><span class="hl sym">,</span>
+                     <span class="hl num">4.40486</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">5.36809</span><span class="hl sym">,</span>
+                     <span class="hl num">2.41201E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.25881</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">8.62744E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.79774E-3</span><span class="hl sym">,</span>
+                     <span class="hl num">5.58609</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">7.81335E-3</span><span class="hl sym">,</span>
+                     <span class="hl num">3.78963E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.80005E-4</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.81566</span><span class="hl sym">,</span>
+                     <span class="hl num">2.08</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.56</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">1.0</span><span class="hl sym">,</span>
+                     <span class="hl num">1.80</span>E1<span class="hl sym">])</span>
+
+A104 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">2.33271</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.89958</span><span class="hl sym">,</span>
+                     <span class="hl num">3.21440</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">1.68622</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">4.42123E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.38645</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">2.82629E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.40976E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">6.63272E-4</span><span class="hl sym">,</span>
+                     <span class="hl num">2.04466</span><span class="hl sym">,</span>
+                     <span class="hl num">8.35474</span><span class="hl sym">,</span>
+                     <span class="hl num">1.71347</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.60715</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.63139</span><span class="hl sym">,</span>
+                     <span class="hl num">4.14641E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">8.70275</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.30068E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">3.60966E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">1.53246E-5</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.46166</span><span class="hl sym">,</span>
+                     <span class="hl num">1.115884</span>E2<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">6.452606</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">5.337863</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">2.026986</span><span class="hl sym">])</span>
+
+A111 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">2.03910E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">7.67310E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">8.48581E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.93086E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">8.40269E-4</span><span class="hl sym">,</span>
+                    <span class="hl num">2.67251E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.47701E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">2.37262E-2</span><span class="hl sym">,</span>
+                    <span class="hl num">3.13687E-5</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.41973E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.,</span>
+                    <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A112 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">5.12404</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.8474E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">1.54532</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">4.52475E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.22881E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.35181</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">8.56845E-3</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.68725E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.25256E-4</span><span class="hl sym">,</span>
+                     <span class="hl num">4.18451</span><span class="hl sym">,</span>
+                     <span class="hl num">7.52564</span><span class="hl sym">,</span>
+                     <span class="hl num">8.35238E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.95558</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.23393</span><span class="hl sym">,</span>
+                     <span class="hl num">3.34510E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">1.71779</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.34269E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">4.54628E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">4.81788E-4</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">5.09936</span><span class="hl sym">,</span>
+                     <span class="hl num">6.148442</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.828123</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">5.468755</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">1.562500</span>E1<span class="hl sym">])</span>
+
+A113 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">1.23779</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.14728</span><span class="hl sym">,</span>
+                     <span class="hl num">2.41382</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">1.38957</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.63693E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.42844</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">2.24265E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">4.06553E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.23888E-4</span><span class="hl sym">,</span>
+                     <span class="hl num">2.8762</span><span class="hl sym">,</span>
+                     <span class="hl num">4.40782</span><span class="hl sym">,</span>
+                     <span class="hl num">1.33046</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.15405</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.59892</span><span class="hl sym">,</span>
+                     <span class="hl num">5.30580E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">8.57309</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.10376E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">4.71274E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">4.77650E-4</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.96233</span><span class="hl sym">,</span>
+                     <span class="hl num">1.4075</span>E2<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">6.499992</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">7.75</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">5.0</span><span class="hl sym">])</span>
+
+A114 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">1.27244</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.66684</span><span class="hl sym">,</span>
+                     <span class="hl num">1.72708</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">1.45307</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.64515E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">6.97208</span><span class="hl sym">,</span>
+                     <span class="hl num">1.90463E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.04323E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">4.80787E-4</span><span class="hl sym">,</span>
+                     <span class="hl num">9.67524E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">7.71330</span><span class="hl sym">,</span>
+                     <span class="hl num">5.0834E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">9.8211</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">4.49138E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">9.41787E-4</span><span class="hl sym">,</span>
+                     <span class="hl num">4.16530</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.40293E-3</span><span class="hl sym">,</span>
+                     <span class="hl num">9.63923E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">8.28450E-4</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">5.88807E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.092654</span>E3<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.05312</span>E2<span class="hl sym">,</span>
+                     <span class="hl num">4.656243</span>E2<span class="hl sym">,</span>
+                     <span class="hl num">1.312498</span>E2<span class="hl sym">])</span>
+
+A121 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">1.54141E-3</span><span class="hl sym">,</span>
+                     <span class="hl num">6.58337E-4</span><span class="hl sym">,</span>
+                     <span class="hl num">9.82201E-1</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.85028E-3</span><span class="hl sym">,</span>
+                     <span class="hl num">1.23111E-4</span><span class="hl sym">,</span>
+                     <span class="hl num">3.77441E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">4.08210E-4</span><span class="hl sym">,</span>
+                     <span class="hl num">4.56963E-3</span><span class="hl sym">,</span>
+                     <span class="hl num">2.13592E-5</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.35172E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.,</span>
+                     <span class="hl num">0</span><span class="hl sym">.])</span>
+
+A122 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([</span><span class="hl num">8.06492E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">9.91293E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.70742</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.28264E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">5.03500E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">3.02351</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">6.13927E-3</span><span class="hl sym">,</span>
+                    <span class="hl num">1.31574E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">1.69824E-4</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.12755</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.17930E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.12207E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">1.36524</span><span class="hl sym">,</span>
+                    <span class="hl num">4.05886E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.88260E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">2.10926</span><span class="hl sym">,</span>
+                    <span class="hl num">1.65486E-2</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.89881E-1</span><span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">5.1140E-4</span><span class="hl sym">,</span>
+                    <span class="hl num">8.79806E-1</span><span class="hl sym">,</span>
+                    <span class="hl num">1.959604</span>E2<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">4.269391</span>E1<span class="hl sym">,</span>
+                    <span class="hl sym">-</span><span class="hl num">1.734931</span>E2<span class="hl sym">,</span>
+                    <span class="hl num">3.762898</span>E1<span class="hl sym">])</span>
+
+A123 <span class="hl sym">=</span> numpy<span class="hl sym">.</span><span class="hl kwd">array</span><span class="hl sym">([-</span><span class="hl num">1.66249</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">8.91113E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">4.11648</span><span class="hl sym">,</span>
+                     <span class="hl num">8.78093E-2</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.09742E-3</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.84445</span><span class="hl sym">,</span>
+                     <span class="hl num">1.99879E-3</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">7.50324E-3</span><span class="hl sym">,</span>
+                     <span class="hl num">6.85472E-5</span><span class="hl sym">,</span>
+                     <span class="hl num">3.05784E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">1.11555</span>E1<span class="hl sym">,</span>
+                     <span class="hl num">1.3210</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.71236</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.2919</span><span class="hl sym">,</span>
+                     <span class="hl num">6.28124E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">8.63804</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">3.07949E-2</span><span class="hl sym">,</span>
+                     <span class="hl num">3.07809E-1</span><span class="hl sym">,</span>
+                     <span class="hl num">1.57743E-3</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">1.42634</span><span class="hl sym">,</span>
+                     <span class="hl num">1.330611</span>E2<span class="hl sym">,</span>
+                     <span class="hl num">8.979635</span><span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">7.265298</span>E1<span class="hl sym">,</span>
+                     <span class="hl sym">-</span><span class="hl num">2.449009</span><span class="hl sym">])</span>
+
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 2.10, http://www.andre-simon.de/-->

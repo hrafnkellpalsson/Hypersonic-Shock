@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>calculators_unittest.py</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">Test functions in calculators.py module.</span>
+<span class="hl str">&quot;&quot;&quot;</span>
+
+<span class="hl slc"># Python library</span>
+<span class="hl kwa">import</span> unittest
+<span class="hl slc"># 3rd party imports</span>
+<span class="hl kwa">import</span> numpy
+<span class="hl slc"># Local imports</span>
+<span class="hl kwa">import</span> constants
+
+<span class="hl slc"># The module/functions to test</span>
+<span class="hl kwa">import</span> calculators
+
+<span class="hl kwa">class</span> <span class="hl kwd">TestCase_calculators</span><span class="hl sym">(</span>unittest<span class="hl sym">.</span>TestCase<span class="hl sym">):</span>
+    <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">    Tests class for functions in .alculators.py.</span>
+<span class="hl str">    &quot;&quot;&quot;</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">test_p2_shock_wave</span><span class="hl sym">(</span>self<span class="hl sym">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Test calculators.p2_shock_wave().</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+
+        p1 <span class="hl sym">=</span> <span class="hl num">0.01</span> <span class="hl sym">*</span> <span class="hl num">101.325</span>E3
+        rho1 <span class="hl sym">=</span> <span class="hl num">0.013</span>
+        u1 <span class="hl sym">=</span> <span class="hl num">2973</span><span class="hl sym">.</span>
+        rho1_to_rho2 <span class="hl sym">=</span> <span class="hl num">0.1</span>
+        p2_known <span class="hl sym">=</span> <span class="hl num">104.426</span>E3
+        p2_calculated <span class="hl sym">=</span> calculators<span class="hl sym">.</span><span class="hl kwd">p2_shock_wave</span><span class="hl sym">(</span>p1<span class="hl sym">,</span> rho1<span class="hl sym">,</span> u1<span class="hl sym">,</span> rho1_to_rho2<span class="hl sym">)</span>
+        tolerance <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+        self<span class="hl sym">.</span><span class="hl kwd">assertTrue</span><span class="hl sym">(</span>numpy<span class="hl sym">.</span><span class="hl kwb">abs</span><span class="hl sym">(</span>p2_known <span class="hl sym">-</span> p2_calculated<span class="hl sym">) &lt;</span> tolerance<span class="hl sym">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">test_h2_shock_wave</span><span class="hl sym">(</span>self<span class="hl sym">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Test calculators.h2_shock_wave().</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl slc"># FIXME: I just put h2_known equal to h2_calculated.</span>
+        <span class="hl slc"># Need to come up with a reasonable estimate of h2_known.</span>
+
+        p1 <span class="hl sym">=</span> <span class="hl num">0.01</span> <span class="hl sym">*</span> <span class="hl num">101.325</span>E3
+        rho1 <span class="hl sym">=</span> <span class="hl num">0.013</span>
+        u1 <span class="hl sym">=</span> <span class="hl num">2973</span><span class="hl sym">.</span>
+        <span class="hl slc"># What it a good value of enthalpy to use?</span>
+        <span class="hl slc"># Let's use enthalpy of air when it's at 293Kassuming the air perfect at that temperature.</span>
+        c_p <span class="hl sym">=</span> <span class="hl num">1003.5</span>
+        h1 <span class="hl sym">=</span> c_p <span class="hl sym">*</span> <span class="hl num">298</span><span class="hl sym">.</span>
+        rho1_to_rho2 <span class="hl sym">=</span> <span class="hl num">0.1</span>
+        h2_known <span class="hl sym">=</span> <span class="hl num">4674213</span><span class="hl sym">.</span>
+        h2_calculated <span class="hl sym">=</span> calculators<span class="hl sym">.</span><span class="hl kwd">h2_shock_wave</span><span class="hl sym">(</span>h1<span class="hl sym">,</span> u1<span class="hl sym">,</span> rho1_to_rho2<span class="hl sym">)</span>
+        tolerance <span class="hl sym">=</span> <span class="hl num">1</span><span class="hl sym">.</span>
+        self<span class="hl sym">.</span><span class="hl kwd">assertTrue</span><span class="hl sym">(</span>numpy<span class="hl sym">.</span><span class="hl kwb">abs</span><span class="hl sym">(</span>h2_known <span class="hl sym">-</span> h2_calculated<span class="hl sym">) &lt;</span> tolerance<span class="hl sym">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">test_srinivasan_p</span><span class="hl sym">(</span>self<span class="hl sym">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Test calculators.srinivasan_p().</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl slc"># Let's test at standard sea level conditions. Then the Srinivasan correlation should give results</span>
+        <span class="hl slc"># close to the results obtained when the air is considered to be perfect.</span>
+        <span class="hl slc"># e = c_v * T for perfect gas.</span>
+        c_v <span class="hl sym">=</span> constants<span class="hl sym">.</span>c_v
+        T0 <span class="hl sym">=</span> constants<span class="hl sym">.</span>T0
+        e <span class="hl sym">=</span> c_v <span class="hl sym">*</span> T0
+        rho <span class="hl sym">=</span> constants<span class="hl sym">.</span>rho0
+        p0 <span class="hl sym">=</span> constants<span class="hl sym">.</span>p0
+        p_known <span class="hl sym">=</span> p0
+        p_calculated <span class="hl sym">=</span> calculators<span class="hl sym">.</span><span class="hl kwd">srinivasan_p</span><span class="hl sym">(</span>e<span class="hl sym">,</span> rho<span class="hl sym">)</span>
+        tolerance <span class="hl sym">=</span> <span class="hl num">0.02</span> <span class="hl sym">*</span> p0
+        self<span class="hl sym">.</span><span class="hl kwd">assertTrue</span><span class="hl sym">(</span>numpy<span class="hl sym">.</span><span class="hl kwb">abs</span><span class="hl sym">(</span>p_known <span class="hl sym">-</span> p_calculated<span class="hl sym">) &lt;</span> tolerance<span class="hl sym">)</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">test_calculate_p_rho_h</span><span class="hl sym">(</span>self<span class="hl sym">):</span>
+        <span class="hl slc"># Let's use figure 14.5a p. 610 Anderson to choose a good test point.</span>
+        <span class="hl slc"># Let's look at the 35900 ft curve at u1 = 10000 ft/s = 3048 m/s</span>
+        <span class="hl slc"># Looking at sentence above table IV in Huber (reference [165] in Anderson) we see that</span>
+        <span class="hl slc"># at 35900 ft then p1 = 0.2250 atm = 0.2250 * 1.013 Pa and T1 = 217 K.</span>
+        <span class="hl slc"># Air can be approximated pretty precisely as perfect at these conditions so let's</span>
+        <span class="hl slc"># use the perfect gas law to calculate rho1.</span>
+        <span class="hl slc"># Also, calculate h1 under the perfect gas assumption, h1 = c_p * T1.</span>
+        u1 <span class="hl sym">=</span> <span class="hl num">3048</span><span class="hl sym">.</span>
+        p1 <span class="hl sym">=</span> <span class="hl num">0.2250</span> <span class="hl sym">*</span> <span class="hl num">1.013</span>E5
+        T1 <span class="hl sym">=</span> <span class="hl num">217</span><span class="hl sym">.</span>
+        c_p <span class="hl sym">=</span> <span class="hl num">1003.5</span>
+        h1 <span class="hl sym">=</span> c_p <span class="hl sym">*</span> T1
+        R <span class="hl sym">=</span> <span class="hl num">287</span><span class="hl sym">.</span>
+        rho1 <span class="hl sym">=</span> p1 <span class="hl sym">/ (</span>R <span class="hl sym">*</span> T1<span class="hl sym">)</span>
+        rho2_guess <span class="hl sym">=</span> <span class="hl num">10</span><span class="hl sym">. *</span> rho1
+        calculated_properties <span class="hl sym">=</span> calculators<span class="hl sym">.</span><span class="hl kwd">calculate_p_rho_h</span><span class="hl sym">(</span>u1<span class="hl sym">,</span> p1<span class="hl sym">,</span> rho1<span class="hl sym">,</span> T1<span class="hl sym">,</span> h1<span class="hl sym">,</span> rho2_guess<span class="hl sym">)</span>
+        rho2_calculated <span class="hl sym">=</span> calculated_properties<span class="hl sym">[</span><span class="hl str">'density'</span><span class="hl sym">]</span>
+        p2_calculated <span class="hl sym">=</span> calculated_properties<span class="hl sym">[</span><span class="hl str">'pressure'</span><span class="hl sym">]</span>
+        h2_calculated <span class="hl sym">=</span> calculated_properties<span class="hl sym">[</span><span class="hl str">'enthalpy'</span><span class="hl sym">]</span>
+
+        <span class="hl slc"># Reading off figure 14.5a we estimate rho2_known as:</span>
+        rho2_known <span class="hl sym">=</span> <span class="hl num">7.8</span> <span class="hl sym">*</span> rho1
+
+        <span class="hl slc"># Errors could be introduced through rho1 and h1 and reading of figure 14.5a.</span>
+        <span class="hl slc"># Allow for these error sources when choosing a value for rho_tolerance.</span>
+        <span class="hl slc"># A print statement on rho1 in a previous supplied rho1 = 0.366, which means that</span>
+        <span class="hl slc"># rho2 = 2.855. Allow for 5% error, i.e. 0.15 * 2.855 = 0.14.</span>
+        rho_tolerance <span class="hl sym">=</span> <span class="hl num">0.14</span>
+        self<span class="hl sym">.</span><span class="hl kwd">assertTrue</span><span class="hl sym">(</span>numpy<span class="hl sym">.</span><span class="hl kwb">abs</span><span class="hl sym">(</span>rho2_known <span class="hl sym">-</span> rho2_calculated<span class="hl sym">) &lt;</span> rho_tolerance<span class="hl sym">)</span>
+
+        <span class="hl slc"># Comment:</span>
+        <span class="hl slc"># When this test was run March 11 2010 we got:</span>
+        <span class="hl slc"># p2_calculated = 2984062 and h2_calculated = 4785562.</span>
+        <span class="hl slc"># Real gas shock calculator at http://www.engapplets.vt.edu/ gives values lying very close</span>
+        <span class="hl slc"># to these, p2 = 2992800 and h2 = 4789200, so we can be confident that</span>
+        <span class="hl slc"># calculators.calculate_p_rho_h() is performing correctly!</span>
+
+    <span class="hl kwa">def</span> <span class="hl kwd">test_srinivasan_T</span><span class="hl sym">(</span>self<span class="hl sym">):</span>
+        <span class="hl str">&quot;&quot;&quot;</span>
+<span class="hl str">        Test calculators.srinivasan_T().</span>
+<span class="hl str">        &quot;&quot;&quot;</span>
+        <span class="hl slc"># Make sure to use values of Z such that calculators.srinivasan_T() doesn't use the</span>
+        <span class="hl slc"># perfect gas law but the correlation, because that is what we're interested in testing.</span>
+        <span class="hl slc"># Requires that Z &gt; 0.25, which can be ensured by choosing p high enough.</span>
+        <span class="hl slc"># Use Thermodynamics of Air applet at http://www.engapplets.vt.edu/ to obtain values</span>
+        <span class="hl slc"># to test against.</span>
+        p0 <span class="hl sym">=</span> constants<span class="hl sym">.</span>p0
+        p <span class="hl sym">=</span> <span class="hl num">10</span><span class="hl sym">. *</span> p0
+        rho0 <span class="hl sym">=</span> constants<span class="hl sym">.</span>rho0
+        rho <span class="hl sym">=</span> rho0
+        T_calculated <span class="hl sym">=</span> calculators<span class="hl sym">.</span><span class="hl kwd">srinivasan_T</span><span class="hl sym">(</span>p<span class="hl sym">,</span> rho<span class="hl sym">)</span>
+        T_known <span class="hl sym">=</span> <span class="hl num">2.6989</span>E3
+        tolerance <span class="hl sym">=</span> <span class="hl num">0.02</span> <span class="hl sym">*</span> T_known
+        self<span class="hl sym">.</span><span class="hl kwd">assertTrue</span><span class="hl sym">(</span>numpy<span class="hl sym">.</span><span class="hl kwb">abs</span><span class="hl sym">(</span>T_known <span class="hl sym">-</span> T_calculated<span class="hl sym">) &lt;</span> tolerance<span class="hl sym">)</span>
+
+        p <span class="hl sym">=</span> <span class="hl num">50</span><span class="hl sym">. *</span> p0
+        T_calculated <span class="hl sym">=</span> calculators<span class="hl sym">.</span><span class="hl kwd">srinivasan_T</span><span class="hl sym">(</span>p<span class="hl sym">,</span> rho<span class="hl sym">)</span>
+        T_known <span class="hl sym">=</span> <span class="hl num">8.7745</span>E3
+        tolerance <span class="hl sym">=</span> <span class="hl num">0.02</span> <span class="hl sym">*</span> T_known
+        self<span class="hl sym">.</span><span class="hl kwd">assertTrue</span><span class="hl sym">(</span>numpy<span class="hl sym">.</span><span class="hl kwb">abs</span><span class="hl sym">(</span>T_known <span class="hl sym">-</span> T_calculated<span class="hl sym">) &lt;</span> tolerance<span class="hl sym">)</span>
+
+
+
+<span class="hl kwa">if</span> __name__ <span class="hl sym">==</span> <span class="hl str">'__main__'</span><span class="hl sym">:</span>
+    unittest<span class="hl sym">.</span><span class="hl kwd">main</span><span class="hl sym">()</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 2.10, http://www.andre-simon.de/-->
